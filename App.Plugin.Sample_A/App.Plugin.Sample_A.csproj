@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+	  <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
+	  <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+      <RootNamespace>App.Plugin.Sample_A</RootNamespace>
+	  <Platforms>x86;x64;arm64</Platforms>
+	  <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+	  <UseWinUI>true</UseWinUI>
+
+	  <!-- This is needed to embedd the comppiled xmal (xbf) into the pri file -->
+	  <DisableEmbeddedXbf>false</DisableEmbeddedXbf>
+	  <EnableMsixTooling>true</EnableMsixTooling>
+	  
+	  <!-- This controls the version used by Discovery Service -->
+	  <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+  
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="SampleAView.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+	  <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7463" />
+	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251106002" />
+	  <PackageReference Include="System.ComponentModel.Composition" Version="10.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\App.Plugin\App.Plugin.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="SampleAView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="if not exist &quot;$(SolutionDir)_Plugins&quot; mkdir &quot;$(SolutionDir)_Plugins&quot;&#xD;&#xA;copy /Y &quot;$(TargetDir)$(ProjectName).dll&quot; &quot;$(SolutionDir)_Plugins\$(ProjectName).dll&quot;&#xD;&#xA;copy /Y &quot;$(TargetDir)$(ProjectName).pri&quot; &quot;$(SolutionDir)_Plugins\$(ProjectName).pri&quot;" />
+  </Target>
+</Project>
